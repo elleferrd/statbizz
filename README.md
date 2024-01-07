@@ -138,6 +138,7 @@ Kemudian, untuk mengecek kualitas model, dilakukn=an uji korelasi dan r square:
       results_ = model.fit()
       kronis=results_.rsquared
 
+
       #export hasil r square dalam 1 tabel
       variabel = ["Age", "BMI", "Transplant", "BloodPressureProblem", "CancerFamily", "Chronic"]
       rsquare = [round(age, 2), round(bmi, 2), round(transplant, 2), round(blood, 2), round(cancer, 2),round(kronis, 2)]
@@ -145,4 +146,17 @@ Kemudian, untuk mengecek kualitas model, dilakukn=an uji korelasi dan r square:
       rsquare = pd.DataFrame(rsquare)
       result2 = pd.concat([variabel, rsquare], axis=1)
       result2
+
+
+![x](https://github.com/elleferrd/statbizz/assets/137087598/dd1bc8c7-2b25-4dad-9b2b-94456779e424)
+*nb r square variabel histori kanker terlalu kecil, hanya bisa menjelaskan premi sebesar 2% sehingga dapat di take out
+
+      # cek ulang r square seluruh variabel
+      model = smf.ols("PremiumPrice ~  Age + BMI + AnyTransplants  + AnyChronicDiseases + BloodPressureProblems ", data)
+      results_ = model.fit()
+      results_.rsquared
+![x](https://github.com/elleferrd/statbizz/assets/137087598/6b763af0-f863-4e94-88ee-06a6fb668ec0)
+
+
+
 
