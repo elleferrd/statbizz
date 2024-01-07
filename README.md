@@ -181,6 +181,7 @@ Untuk persiapann: buatlah fungsi, kemudian menyesuaikan data untuk analisis.
                             index = coef.index, 
                             columns=["coef","std err"])
           return df
+          
 
       # Menyesuaikan bentuk data
       # Centering Age agar intersep lebih mudah diartikan
@@ -246,4 +247,71 @@ Skrip tersebut disesuaikan variabel bmi, transplants, masalah tekanan darah dan 
 
 ![x](https://github.com/elleferrd/statbizz/assets/137087598/0ee3c05e-6505-451a-b974-36a36ddf72e2)
 
+# Uji Regresi Logistik
 
+[Disclaimer model ini hanya merupakan ilustrasi dan perlu di validasi lebih lanjut karena R square yang cukup rendah]
+
+Langkah pertama, cek seluruh variabel:
+
+      #Uji regresi logistik 
+      logit_model = smf.logit("Die ~ c_age2 + c_bmi + AnyTransplants + BloodPressureProblems + HistoryOfCancerInFamily + AnyChronicDiseases + KnownAllergies", data)
+      # Fit the model
+      model_switch = logit_model.fit()
+      print(model_switch.summary())
+
+![x](https://github.com/elleferrd/statbizz/assets/137087598/357e13de-97c6-499b-b57c-0c081dea60e6)
+
+Langkah kedua, keluarkan variabel yang p valuenya dibawah 0.05 untuk membuat model perhitungan probabilitas meninggalnya tertanggung dalam kurun waktu 10 tahun join asuransi dan gambar grafik regresi logistik
+
+      #Uji regresi logistik 
+      logit_model = smf.logit("Die ~ c_age2 + c_bmi + BloodPressureProblems + HistoryOfCancerInFamily + AnyChronicDiseases", data)
+      # Fit the model
+      model_switch = logit_model.fit()
+      print(model_switch.summary())
+
+
+      #menggambar grafik regresi logistik
+      # Create Logit model object untuk age
+      logit_model = smf.logit("Die ~ Age", data)
+      # Fit the model
+      model_default = logit_model.fit()
+      # Extract the results (Coefficient and Standard Error) to DataFrame
+      results_default_coef = print_coef_std_err(model_default)
+      predictor = "Age"
+      outcome = "Die"
+      data = data.copy()
+      results_ = results_default_coef.copy()
+      # Plot the data
+      plt.scatter(data[predictor], data[outcome], marker= 'o', facecolors = "none", edgecolor="orange", alpha=0.5, label='data')
+      # Calculate the fitted values
+      a_hat = results_.loc["Intercept"]["coef"]
+      b_hat = results_.loc[predictor]["coef"]
+      # get values from predictor range
+      x_range = np.linspace(np.min(data[predictor]), np.max(data[predictor]), 100)
+      # predicted probabilities of x in x_range
+      pred_prob = expit(a_hat + b_hat*x_range)
+      # Plot the fitted line
+      plt.plot(x_range, pred_prob, label="Fitted curve", color = "c")
+      # Add a legend and labels
+      plt.legend()
+      plt.ylabel(predictor)
+      plt.xlabel(outcome)
+      # Add a title and adjust the margins
+      plt.title("Data and fitted regression line")
+      # Show the plot
+      plt.show()
+
+Skrip tersebut disesuaikan variabel bmi, masalah tekanan darah, histori kanker dan penyakit kronis, untuk mendapatkan hasil berikut:
+
+![regres](https://github.com/elleferrd/statbizz/assets/137087598/8b106009-0672-485a-b5b7-51476c4dc551)
+
+
+# Conclusion
+
+1. Faktor-faktor apa saja yang signifikan terhadap harga premi dan dapat digunakan untuk memprediksi harga premi adalah usia, masalah tekanan darah, penyakit kronis, transplant dan BMI
+2. Model regresi linear untuk memprediksi harga premi adalah “Harga Premi = 23.397  +  (312 x c_age)  +  (145 x c_bmi)  + ( 7.777 x Transplant) + (2.770 x Penyakit Kronis)  + (11 x Masalah tekanan darah)”
+3. Model logit untuk memprediksi probabilitas kematian dalam kurun waktu 10 tahun sejak tertanggung bergabung dalah “P(Die) = logit^-1 (-2,2 + 0,03 x c_age2 + 0,0558 x c_bmi + 0,92 x BloodPressureProblems + 0,51 x HistoryOfCancerInFamily + 2,43 x AnyChronicDiseases)”
+
+
+
+![image](https://github.com/elleferrd/statbizz/assets/137087598/de67f14e-963d-497e-ae31-ae60480b65c1)
