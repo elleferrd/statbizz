@@ -310,8 +310,7 @@ Skrip tersebut disesuaikan variabel bmi, masalah tekanan darah, histori kanker d
 
 1. Faktor-faktor apa saja yang signifikan terhadap harga premi dan dapat digunakan untuk memprediksi harga premi adalah usia, masalah tekanan darah, penyakit kronis, transplant dan BMI
 2. Model regresi linear untuk memprediksi harga premi adalah “Harga Premi = 23.397  +  (312 x c_age)  +  (145 x c_bmi)  + ( 7.777 x Transplant) + (2.770 x Penyakit Kronis)  + (11 x Masalah tekanan darah)”
+   Artinya: Seseorang yang berusia 42 tahun dan memiliki BMI rata-rata memiliki harga premi sebesar 23.397, apabila ia pernah transpalasi organ maka harganya akan meningkat sebesar 7.777, apabila ia menderita penyakit kronis harganya meningkat sebesar 2.770, dan apabila ia memiliki masalah tekanan darah, harganya meningkat sebesar 11.
 3. Model logit untuk memprediksi probabilitas kematian dalam kurun waktu 10 tahun sejak tertanggung bergabung dalah “P(Die) = logit^-1 (-2,2 + 0,03 x c_age2 + 0,0558 x c_bmi + 0,92 x BloodPressureProblems + 0,51 x HistoryOfCancerInFamily + 2,43 x AnyChronicDiseases)”
+   Probabilitas seseorang yang berusia 38 meninggal dalam kurun waktu 10 tahun sejak bergabung di asuransi dapat dihitung dengan rumus diatas. Yang mana di anatra penyakit kronis memiliki dampak yang paling     besar dibandingkan masalah tekanan darah dan histori kanker dalam keluarga. Sedangkan, msalah tekanan darah juga lebih berpengaruh dalam perhitungan dibandingkan histori kanker dalam keluarga. 
 
-
-
-![image](https://github.com/elleferrd/statbizz/assets/137087598/de67f14e-963d-497e-ae31-ae60480b65c1)
