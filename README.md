@@ -77,8 +77,8 @@ Mengelompokan data yang akan diuji perbedaannya
       ale0 = data[data['KnownAllergies'] == 0]
       ale1 = data[data['KnownAllergies'] == 1]
        # membedakan sampel data berdasarkan ada keluarga yang kanker atau tidak
-      surgeries0 = data[data['HistoryOfCancerInFamily'] == 0]
-      surgeries1 = data[data['HistoryOfCancerInFamily'] == 1]
+      cancer0 = data[data['HistoryOfCancerInFamily'] == 0]
+      cancer1 = data[data['HistoryOfCancerInFamily'] == 1]
        # membedakan sampel data berdasarkan gender
       male = data[data['Gender'] == 'Male']
       female = data[data['Gender'] == 'Female']
@@ -86,7 +86,7 @@ Mengelompokan data yang akan diuji perbedaannya
 Membandingkan premi dari masing-masing kelompok sampel 
 
       #Uji statistik untuk mencari p value, yang mana sampel yang disebut pertama lebih besar
-      t_statistic1, p_value_usia = scipy.stats.ttest_ind(tua['Premium'], muda['Premium'], alternative = "greater")
+      t_statistic, p_value_usia = scipy.stats.ttest_ind(tua['Premium'], muda['Premium'], alternative = "greater")
       t_statistic, p_value_obe = scipy.stats.ttest_ind(obe['Premium'], tidakobe['Premium'], alternative = "greater")
       t_statistic, p_value_blood = scipy.stats.ttest_ind(blood1['Premium'], blood0['Premium'], alternative = "greater")
       t_statistic, p_value_trans = scipy.stats.ttest_ind(trans1['Premium'], trans0['Premium'], alternative = "greater")
@@ -102,4 +102,47 @@ Membandingkan premi dari masing-masing kelompok sampel
       pval = pd.DataFrame(pval)
       result = pd.concat([variabel, pval], axis=1)
 
+![x](https://github.com/elleferrd/statbizz/assets/137087598/cd237a1b-4d31-4bbc-8938-67ba4e28e0ef)
+
+Kemudian, untuk mengecek kualitas model, dilakukn=an uji korelasi dan r square:
+
+      #UJI KORELASI
+      korelasi = data[['Age', 'BloodPressureProblems', 'AnyTransplants', 'AnyChronicDiseases', 'BMI', 'HistoryOfCancerInFamily', 'Premium']].corr()
+      korelasi
+![x](https://github.com/elleferrd/statbizz/assets/137087598/80f66289-2717-458f-a2c7-a478808d98e3)
+
+
+      # R SQUARE
+      # buat model wls, model fitting dan extract r square usia
+      model = smf.wls("Premium ~ Age", data)
+      results_ = model.fit()
+      age = results_.rsquared
+      # buat model wls, model fitting dan extract r square bmi
+      model = smf.wls("Premium ~ BMI", data)
+      results_ = model.fit()
+      bmi =results_.rsquared
+      # buat model wls, model fitting dan extract r square transplant
+      model = smf.wls("Premium ~ AnyTransplants", data)
+      results_ = model.fit()
+      transplant=results_.rsquared
+      # buat model wls, model fitting dan extract r square tekanan darah
+      model = smf.wls("Premium ~ BloodPressureProblems", data)
+      results_ = model.fit()
+      blood=results_.rsquared
+      # Create OLS model object histori kanker
+      model = smf.wls("Premium ~ HistoryOfCancerInFamily", data)
+      results_ = model.fit()
+      cancer=results_.rsquared
+      # buat model wls, model fitting dan extract r square penyakit kronis
+      model = smf.wls("Premium ~ AnyChronicDiseases", data)
+      results_ = model.fit()
+      kronis=results_.rsquared
+
+      #export hasil r square dalam 1 tabel
+      variabel = ["Age", "BMI", "Transplant", "BloodPressureProblem", "CancerFamily", "Chronic"]
+      rsquare = [round(age, 2), round(bmi, 2), round(transplant, 2), round(blood, 2), round(cancer, 2),round(kronis, 2)]
+      variabel = pd.DataFrame(variabel)
+      rsquare = pd.DataFrame(rsquare)
+      result2 = pd.concat([variabel, rsquare], axis=1)
+      result2
 
