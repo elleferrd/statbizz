@@ -77,23 +77,22 @@ Mengelompokan data yang akan diuji perbedaannya
       ale0 = data[data['KnownAllergies'] == 0]
       ale1 = data[data['KnownAllergies'] == 1]
        # membedakan sampel data berdasarkan ada keluarga yang kanker atau tidak
-      surgeries0 = data[data['NumberOfMajorSurgeries'] == 0]
-      surgeries1 = data[data['NumberOfMajorSurgeries'] == 1]
+      surgeries0 = data[data['HistoryOfCancerInFamily'] == 0]
+      surgeries1 = data[data['HistoryOfCancerInFamily'] == 1]
        # membedakan sampel data berdasarkan gender
       male = data[data['Gender'] == 'Male']
       female = data[data['Gender'] == 'Female']
 
 Membandingkan premi dari masing-masing kelompok sampel 
 
-      #Uji statistik untuk mencari p value 
+      #Uji statistik untuk mencari p value, yang mana sampel yang disebut pertama lebih besar
       t_statistic1, p_value_usia = scipy.stats.ttest_ind(tua['Premium'], muda['Premium'], alternative = "greater")
       t_statistic, p_value_obe = scipy.stats.ttest_ind(obe['Premium'], tidakobe['Premium'], alternative = "greater")
-      t_statistic, p_value_diabet = scipy.stats.ttest_ind(diabet1['Premium'], diabet0['Premium'], alternative = "greater")
       t_statistic, p_value_blood = scipy.stats.ttest_ind(blood1['Premium'], blood0['Premium'], alternative = "greater")
       t_statistic, p_value_trans = scipy.stats.ttest_ind(trans1['Premium'], trans0['Premium'], alternative = "greater")
       t_statistic, p_value_chronic = scipy.stats.ttest_ind(chronic1['Premium'], chronic0['Premium'], alternative = "greater")
-      t_statistic, p_value_ale = scipy.stats.ttest_ind(ale1['Premium'], ale0['Premium'], alternative = "greater")
       t_statistic, p_value_cancer = scipy.stats.ttest_ind(cancer1['Premium'], cancer0['Premium'], alternative = "greater")
+      t_statistic, p_value_ale = scipy.stats.ttest_ind(ale1['Premium'], ale0['Premium'], alternative = "greater")
       t_statistic, p_value_gender = scipy.stats.ttest_ind(male['Premium'], female['Premium'], alternative = "greater")
 
       #export hasilnya dalam 1 tabel melalui membuat masing-masing kolom dan digabungkan
