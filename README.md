@@ -22,6 +22,8 @@ Pertama-lama import library dan data, dan cek data serba sebaran data:
       import scipy.stats
       import statsmodels.formula.api as smf
       import scipy.stats as stats
+      import statsmodels.formula.api as smf
+      from scipy.special import expit, logit
       # cross validation using statsmodel prepartion
       from sklearn.base import BaseEstimator, RegressorMixin
       from sklearn.metrics import r2_score
@@ -52,6 +54,8 @@ Pertama-lama import library dan data, dan cek data serba sebaran data:
       sns.boxplot(x='AnyChronicDiseases', y='Premium', data=data)
       sns.boxplot(x='BloodPressureProblems', y='Premium', data=data)
       sns.boxplot(x='AnyTransplants', y='Premium', data=data)
+
+![x](https://github.com/elleferrd/statbizz/assets/137087598/82da0227-d688-4b30-8b87-a7dec9edbb89)
 
 # Uji Statistik
 Langkah selanjutnya adalah uji perbedaan dua kelompok grup menggunakan uji t, dimulai dari memisahkan kelompok data yang ingin diuji yang kemudian diuji statistiknya:
@@ -149,6 +153,7 @@ Kemudian, untuk mengecek kualitas model, dilakukn=an uji korelasi dan r square:
 
 
 ![x](https://github.com/elleferrd/statbizz/assets/137087598/dd1bc8c7-2b25-4dad-9b2b-94456779e424)
+
 *nb r square variabel histori kanker terlalu kecil, hanya bisa menjelaskan premi sebesar 2% sehingga dapat di take out
 
       # cek ulang r square seluruh variabel
@@ -158,5 +163,87 @@ Kemudian, untuk mengecek kualitas model, dilakukn=an uji korelasi dan r square:
 ![x](https://github.com/elleferrd/statbizz/assets/137087598/6b763af0-f863-4e94-88ee-06a6fb668ec0)
 
 
+# Uji Regresi Linear
+
+Untuk persiapann: buatlah fungsi, kemudian menyesuaikan data untuk analisis.
+
+      #mmembuat fungsi
+      def print_coef_std_err(results):
+          """
+          Function to combine estimated coefficients and standard error in one DataFrame
+          :param results: <statsmodels RegressionResultsWrapper> OLS regression results from statsmodel
+          :return df: <pandas DataFrame>  combined estimated coefficient and standard error of model estimate
+          """
+          coef = results.params
+          std_err = results.bse
+          
+          df = pd.DataFrame(data = np.transpose([coef, std_err]), 
+                            index = coef.index, 
+                            columns=["coef","std err"])
+          return df
+
+      # Menyesuaikan bentuk data
+      # Centering Age agar intersep lebih mudah diartikan
+      data["c_age"] = data["Age"] - data["Age"].mean()
+      data["c_age2"] = data["Umur saat bergabung"] - data["Umur saat bergabung"].mean()
+      data["c_bmi"] = data["BMI"] - data["BMI"].mean()
+      # menyesuaikan satuan agar grafik lebih mudah dibaca
+      data["PremiumK"] = data["Premium"]/1000
+      data["Premium10K"] = data["Premium"]/10000
+      #mencari mean untuk mengartikan intersep
+      age2= data["Umur saat bergabung"].mean()
+      age1= data["Age"].mean()
+      bmi= data["BMI"].mean()
+      age1, age2, bmi
+      
+![x](https://github.com/elleferrd/statbizz/assets/137087598/cc8a942d-22ff-4230-a888-a1c30b2defbe)
+
+Langkah selanjutnya melakukan uji regresi linear dan membuat garis regresi 
+ 
+      # cek model regresi
+      # Create OLS model object
+      model = smf.ols("PremiumPrice ~ c_age + c_bmi + AnyTransplants + AnyChronicDiseases  + BloodPressureProblems", data)
+      # Fit the model
+      results = model.fit()
+      # Extract the results (Coefficient and Standard Error) to DataFrame
+      results_regres = print_coef_std_err(results)
+      results.summary()
+![x](https://github.com/elleferrd/statbizz/assets/137087598/a91f0c1a-18fa-4d95-9546-dfbae5fcc2e9)
+
+      #membuat garis regresi
+      # "Age" dapat diganti sesuai kebutuhan
+      model = smf.ols("PremiumK ~ Age", data)
+      # Fit the model
+      results = model.fit()
+      # Extract the results (Coefficient and Standard Error) to DataFrame
+      results_age = print_coef_std_err(results)
+      # Extract the results (Coefficient and Standard Error) to DataFrame
+      results_age
+
+      # prediktor, oucome dan result_ dapat diganti sesuai kebutuhan
+      predictor = "Age"
+      outcome = "PremiumPriceK"
+      results_ = results_age
+      # Plot the data
+      plt.scatter(data["Age"], data["Age"], color = "k", marker=".")
+      # Calculate the fitted values
+      a_hat = results_age.loc["Intercept"]["coef"]
+      b_hat = results_age.loc["Age"]["coef"]
+      x_domain = np.linspace(np.min(data["Age"]), np.max(data["Age"]), 10)
+      fitted_values = a_hat + b_hat * x_domain
+      # Plot the fitted line
+      plt.plot(x_domain, fitted_values, label="Fitted line", color = "b")
+      # Add a legend and labels
+      plt.legend()
+      plt.ylabel("PremiumPrice")
+      plt.xlabel("Age")
+      # Add a title and adjust the margins
+      plt.title("Data and fitted regression line")
+      # Show the plot
+      plt.show()
+
+Skrip tersebut disesuaikan variabel bmi, transplants, masalah tekanan darah dan penyakit kronis, untuk mendapatkan hasil berikut:
+
+![x](https://github.com/elleferrd/statbizz/assets/137087598/0ee3c05e-6505-451a-b974-36a36ddf72e2)
 
 
