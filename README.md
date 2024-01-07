@@ -56,34 +56,36 @@ Pertama-lama import library dan data, dan cek data serba sebaran data:
 # Uji Statistik
 Langkah selanjutnya adalah uji perbedaan dua kelompok grup menggunakan uji t, dimulai dari memisahkan kelompok data yang ingin diuji yang kemudian diuji statistiknya:
 
-      # mengelompokan data untuk uji perbedaan usia, obesitas atau tidak, masalah tekanan darah, ada histori transplan, ada penyakit kronis, ada alergi, ada keluarga yang kanker atau tidak,  genfer
-
+Mengelompokan data yang akan diuji perbedaannya
+     
+      # membedakan sampel data berdasarkan usia
       tua = data[data['Age'] > 55]
       muda = data[data['Age'] < 56]
-
+      # membedakan sampel data berdasarkan obesitas atau tidak
       obe = data[data['BMI'] > 30]
       tidakobe= data[data['BMI'] < 30]
-      
+      # membedakan sampel data berdasarkan masalah tekanan darah atau tidak
       blood0 = data[data['BloodPressureProblems'] == 0]
       blood1 = data[data['BloodPressureProblems'] == 1]
-      
+      # membedakan sampel data berdasarkan ada histori transplan atau tidak
       trans0 = data[data['AnyTransplants'] == 0]
       trans1 = data[data['AnyTransplants'] == 1]
-      
+      # membedakan sampel data berdasarkan ada penyakit kronis atau tidak
       chronic0 = data[data['AnyChronicDiseases'] == 0]
       chronic1 = data[data['AnyChronicDiseases'] == 1]
-      
+      # membedakan sampel data berdasarkan ada alergi atau tidak
       ale0 = data[data['KnownAllergies'] == 0]
       ale1 = data[data['KnownAllergies'] == 1]
-      
+       # membedakan sampel data berdasarkan ada keluarga yang kanker atau tidak
       surgeries0 = data[data['NumberOfMajorSurgeries'] == 0]
       surgeries1 = data[data['NumberOfMajorSurgeries'] == 1]
-      
+       # membedakan sampel data berdasarkan gender
       male = data[data['Gender'] == 'Male']
       female = data[data['Gender'] == 'Female']
 
+Membandingkan premi dari masing-masing kelompok sampel 
 
-      #Uji statisti untuk mencari p value perbedaan premi untuk tiap kelompok sampel
+      #Uji statistik untuk mencari p value 
       t_statistic1, p_value_usia = scipy.stats.ttest_ind(tua['Premium'], muda['Premium'], alternative = "greater")
       t_statistic, p_value_obe = scipy.stats.ttest_ind(obe['Premium'], tidakobe['Premium'], alternative = "greater")
       t_statistic, p_value_diabet = scipy.stats.ttest_ind(diabet1['Premium'], diabet0['Premium'], alternative = "greater")
@@ -100,3 +102,5 @@ Langkah selanjutnya adalah uji perbedaan dua kelompok grup menggunakan uji t, di
       variabel = pd.DataFrame(variabel)
       pval = pd.DataFrame(pval)
       result = pd.concat([variabel, pval], axis=1)
+
+
